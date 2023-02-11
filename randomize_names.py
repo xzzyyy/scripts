@@ -3,7 +3,7 @@
 import os
 import random
 
-EXTENSIONS = [".jpg", ".png", ".mp4", ".m4v", ".mov"]
+EXTENSIONS = [".jpg", ".png", ".mp4", ".m4v", ".mov", ".webm"]
 
 
 def shuffle(all_files):
@@ -12,7 +12,7 @@ def shuffle(all_files):
 
     for fn in all_files:
         name, ext = os.path.splitext(fn)
-        if ext in EXTENSIONS:
+        if ext.lower() in EXTENSIONS:
             filt_files.append((name, ext))
 
     random.shuffle(filt_files)

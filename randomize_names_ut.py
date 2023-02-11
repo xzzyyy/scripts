@@ -6,15 +6,16 @@ import randomize_names
 class TestRandomizeNames(unittest.TestCase):
 
     def test_shuffle(self):
+        files = ["a.jpg", "b.m4v", "c.png", "D.MOV"]
 
-        files = ["a.jpg", "b.m4v", "c.png"]
         old_new = randomize_names.shuffle(files)
+        self.assertEqual(4, len(old_new))
 
         for old, new in old_new:
             old_name, old_ext = os.path.splitext(old)
             new_name, new_ext = os.path.splitext(new)
             self.assertEqual(old_ext, new_ext)
-            self.assertTrue(new_name in {"0", "1", "2"})
+            self.assertTrue(new_name in {"0", "1", "2", "3"})
 
         files = [str(i) + ".jpg" for i in range(101)]
         old_new = randomize_names.shuffle(files)
