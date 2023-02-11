@@ -1,6 +1,7 @@
 #!/bin/python
 
 import os
+import shutil
 import random
 
 EXTENSIONS = [".jpg", ".png", ".mp4", ".m4v", ".mov", ".webm"]
@@ -26,7 +27,20 @@ def shuffle(all_files):
     return old_new
 
 
+def shuffle_files(fld):
+    os.chdir(fld)
+    old_new = shuffle(os.listdir("."))
+
+    tmp = "tmp"
+    os.mkdir(tmp)
+
+    for old, new in old_new:
+        shutil.move(old, tmp + "/" + new)
+    for old, new in old_new:
+        shutil.move(tmp + "/" + new, new)
+
+    os.rmdir(tmp)
+
+
 if __name__ == "__main__":
-    randomized = shuffle(os.listdir())
-    for old, new in randomized:
-        os.rename(old, new)
+    shuffle_files(".")
