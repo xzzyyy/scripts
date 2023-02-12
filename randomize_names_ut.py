@@ -25,28 +25,48 @@ class TestRandomizeNames(unittest.TestCase):
             new_name, new_ext = os.path.splitext(new)
             self.assertEqual(3, len(new_name))
 
-    def test_dest_fn_exists(self):
+    def test_add_suffix(self):
+        self.assertEqual("a.sfx.jpg", randomize_names.add_suffix("a.jpg", "sfx"))
+
+    def test_top_dir(self):
+        prev_cd = os.getcwd()
+        try:
+            os.chdir(os.environ["TMP"])
+            self.assertEqual("Temp", randomize_names.top_dir("."))
+        finally:
+            os.chdir(prev_cd)
+
+    def test_filesystem(self):
         fns = {"0.jpg", "1.jpg", "2.jpg"}
 
         tmp_dir = os.environ["TMP"]
-        tmp_dir_script = tmp_dir + "/randomize_names.py"
-        os.mkdir(tmp_dir_script)
-        os.chdir(tmp_dir_script)
-
-        for fn in fns:
-            f = open(fn, "w")
-            f.close()
+        tmp_dir_script = tmp_dir + "/" + "randomize_names.py"
 
         try:
+            os.mkdir(tmp_dir_script)
+            os.chdir(tmp_dir_script)
+
+            some_dir = "gopa"
+            os.mkdir(some_dir)        # should not be removed
+
+            for fn in fns:
+                f = open(fn, "w")
+                f.close()
+
             randomize_names.shuffle_files(tmp_dir_script)
-        except FileExistsError:
-            pass
-        res_fns = set(os.listdir("."))
+            res_fns1 = set(os.listdir(tmp_dir_script))
+            randomize_names.shuffle_files(".")
+            res_fns2 = set(os.listdir("."))
 
-        os.chdir(tmp_dir)
-        shutil.rmtree(tmp_dir_script)
+            for name in fns:
+                base, ext = os.path.splitext(name)
+                self.assertIn(base + ".randomize_names.py" + ext, res_fns1)
+                self.assertIn(base + ".randomize_names.py" + ext, res_fns2)
+            self.assertTrue(os.path.isdir(some_dir))
 
-        self.assertEqual(fns, res_fns)
+        finally:
+            os.chdir(tmp_dir)
+            shutil.rmtree(tmp_dir_script)
 
 
 if __name__ == '__main__':

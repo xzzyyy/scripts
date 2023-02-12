@@ -21,25 +21,37 @@ def shuffle(all_files):
 
     for i, (old_name, ext) in enumerate(filt_files):
         new_name = frmt % i
-        print("%s%s > %s%s" % (old_name, ext, new_name, ext))
         old_new.append((old_name + ext, new_name + ext))
 
     return old_new
 
 
+def add_suffix(fn, suffix):
+    basename, ext = os.path.splitext(fn)
+    basename += "." + suffix
+    return basename + ext
+
+
+def top_dir(path):
+    return os.path.basename(os.path.abspath(path))
+
+
 def shuffle_files(fld):
+    suffix = top_dir(fld)
     os.chdir(fld)
-    old_new = shuffle(os.listdir("."))
 
-    tmp = "tmp"
-    os.mkdir(tmp)
+    old_fns = os.listdir(".")
+    old_new = shuffle(old_fns)
+    old_fns_filtered = [old for old, new in old_new]
+
+    tmp_for_old = "old"
+    os.mkdir(tmp_for_old)
+    for fn in old_fns_filtered:
+        shutil.move(fn, "%s/%s" % (tmp_for_old, fn))
 
     for old, new in old_new:
-        shutil.move(old, tmp + "/" + new)
-    for old, new in old_new:
-        shutil.move(tmp + "/" + new, new)
-
-    os.rmdir(tmp)
+        shutil.move("%s/%s" % (tmp_for_old, old), add_suffix(new, suffix))
+    os.rmdir(tmp_for_old)
 
 
 if __name__ == "__main__":
