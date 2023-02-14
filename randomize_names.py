@@ -50,7 +50,9 @@ def shuffle_files(fld):
         shutil.move(fn, "%s/%s" % (tmp_for_old, fn))
 
     for old, new in old_new:
-        shutil.move("%s/%s" % (tmp_for_old, old), add_suffix(new, suffix))
+        new_sfx = add_suffix(new, suffix)
+        shutil.move("%s/%s" % (tmp_for_old, old), new_sfx)
+        print("'%s' ---> '%s'" % (old, new_sfx))
     os.rmdir(tmp_for_old)
 
 
