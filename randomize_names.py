@@ -4,7 +4,7 @@ import os
 import shutil
 import random
 
-EXTENSIONS = [".jpg", ".png", ".mp4", ".m4v", ".mov", ".webm"]
+EXTENSIONS = [".jpg", ".png", ".gif", ".mp4", ".m4v", ".mov", ".webm"]
 
 
 def shuffle(all_files):
